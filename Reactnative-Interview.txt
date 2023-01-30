@@ -1,0 +1,144 @@
+Question 1
+  
+How would yousetup and configure the realm library foe local data storage?
+
+  Step 1 Install the NPM package 
+    
+   'npm install realm'
+
+  for ios  go to the ios directory and do a pod install
+
+   "cd ios && pod install && cd .."
+
+ 
+Question 2
+
+How would you use realm library to create and save task in the app?
+
+ Answer:
+
+import React, { useState } from "react";
+import Realm from "realm";
+
+const Task = {
+  name: "Task",
+  properties: {
+    id: "int",
+    title: "string",
+    description: "string",
+    completed: { type: "bool", default: false },
+  },
+  primaryKey: "id",
+};
+
+const App = () => {
+  const [realm, setRealm] = useState(null);
+  const [taskId, setTaskId] = useState(0);
+
+  useEffect(() => {
+    Realm.open({ schema: [Task] })
+      .then((realm) => {
+        setRealm(realm);
+      });
+  }, []);
+
+  const handleSaveTask = () => {
+    realm.write(() => {
+      realm.create("Task", {
+        id: taskId,
+        title: "My Task",
+        description: "This is my task",
+      });
+      setTaskId(taskId + 1);
+    });
+  };
+
+  return (
+    <>
+      <Button title="Save Task" onPress={handleSaveTask} />
+    </>
+  );
+};
+
+export default App;
+
+
+Question 3
+
+How would you use React Native navigation to create a navigation structure for the app?
+
+Answer:
+
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import HomeScreen from "./HomeScreen";
+import DetailsScreen from "./DetailsScreen";
+
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Details" component={DetailsScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export default App;
+
+note:In this example, we use the createStackNavigator function from the react-navigation package to create a stack navigator. The stack navigator has two screens Home and Details which are defined as components HomeScreen and DetailsScreen respectively. The stack navigator is the top-level component in the app and it renders the Home screen by default. To navigate to the Details screen, you would call navigation.navigate("Details") from the HomeScreen component.
+
+
+Qiestion 4
+
+How would you use the Realm library to retrieve and display tasks in the app using list view?
+
+ Answer:
+import React, { useState, useEffect } from "react";
+import { FlatList, Text, View } from "react-native";
+import Realm from "realm";
+
+const Task = {
+  name: "Task",
+  properties: {
+    id: "int",
+    title: "string",
+    description: "string",
+    completed: { type: "bool", default: false },
+  },
+  primaryKey: "id",
+};
+
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    Realm.open({ schema: [Task] })
+      .then((realm) => {
+        setTasks(realm.objects("Task"));
+      });
+  }, []);
+
+  return (
+    <FlatList
+      data={tasks}
+      keyExtractor={(task) => task.id.toString()}
+      renderItem={({ item: task }) => (
+        <View>
+          <Text>{task.title}</Text>
+          <Text>{task.description}</Text>
+        </View>
+      )}
+    />
+  );
+};
+export default App;
+
+
+Question 5
+    
+ How Would you implement a feature for users to set reminders and notifications for tasks , utilizing the realm library and the react native Push notification library?
+
+   
